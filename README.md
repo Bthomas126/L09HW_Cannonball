@@ -25,7 +25,7 @@ python3 -m streamlit run main.py
 cd L09HW_Cannonball
 source .venv/bin/activate
 uv sync
-uv run streamlit run main.py
+python3 -m uv run streamlit run main.py
 ```
 
 ### Option 2: `pip` (from exported lock)
