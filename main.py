@@ -6,6 +6,24 @@ import streamlit as st
 import random
 
 
+
+class Print_Iface:
+    def main_print(self, xs, ys, title="Trajectory"):
+        df = pd.DataFrame({"x": xs, "y": ys})
+        chart = (
+            alt.Chart(df)
+            .mark_line()
+            .encode(
+                x=alt.X("x:Q", scale=alt.Scale(domain=[0, 200]), title="Distance (m)"),
+                y=alt.Y("y:Q", scale=alt.Scale(domain=[0, 100]), title="Height (m)")
+            )
+            .properties(width=700, height=400)
+        )
+        return chart
+
+
+
+
 ## Represent a cannonball, tracking its position and velocity.
 #
 class Cannonball:
@@ -17,7 +35,7 @@ class Cannonball:
         self._y = 0
         self._vx = 0
         self._vy = 0
-        self.printer = PrintIface()
+        self.printer = Print_Iface()
 
     ## Move the cannon ball, using its current velocities.
     #  @param sec the amount of time that has elapsed.
@@ -87,17 +105,7 @@ def run_app():
             st.warning("No trajectory points were generated.")
             return
 
-        df = pd.DataFrame({"x": xs, "y": ys})
-
-        chart = (
-            alt.Chart(df)
-            .mark_line()
-            .encode(
-                x=alt.X("x:Q", scale=alt.Scale(domain=[0, 200]), title="Distance (m)"),
-                y=alt.Y("y:Q", scale=alt.Scale(domain=[0, 100]), title="Height (m)")
-            )
-            .properties(width=700, height=400)
-        )
+        chart = ball.printer.main_print(xs, ys, title="Earth Trajectory")
         st.altair_chart(chart, use_container_width=True)
 
 
