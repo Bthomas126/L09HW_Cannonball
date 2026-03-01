@@ -14,8 +14,8 @@ class Print_Iface:
             alt.Chart(df)
             .mark_line()
             .encode(
-                x=alt.X("x:Q", scale=alt.Scale(domain=[0, 200]), title="Distance (m)"),
-                y=alt.Y("y:Q", scale=alt.Scale(domain=[0, 100]), title="Height (m)")
+                x=alt.X("x:Q", title="Distance (m)"),
+                y=alt.Y("y:Q", title="Height (m)")
             )
             .properties(width=700, height=400)
         )
@@ -80,6 +80,17 @@ class Cannonball:
 
         return xs, ys
 
+class Crazyball(Cannonball):
+    def move(self, sec, grav):
+        super().move(sec, grav)
+
+        self.rand_q = random.randrange(0, 10)
+
+        if self.getX() < 400:
+            self._x += self.rand_q
+            self._y += random.randrange(0, 5)
+
+
 def run_app():
     st.title("Cannonball Trajectory")
 
@@ -95,6 +106,7 @@ def run_app():
 
     col1, col2 = st.columns(2)
     simulate = col1.button("Simulate")
+    crazy = col2.button("Crazy")
 
     if simulate:
         angle_rad = radians(angle_deg)
@@ -105,9 +117,20 @@ def run_app():
             st.warning("No trajectory points were generated.")
             return
 
-        chart = ball.printer.main_print(xs, ys, title="Earth Trajectory")
+        chart = ball.printer.main_print(xs, ys, title=f"{gravity_name} Trajectory")
         st.altair_chart(chart, use_container_width=True)
 
+    if crazy:
+        angle_rad = radians(angle_deg)
+        ball = Crazyball(0)
+        xs, ys = ball.shoot(angle_rad, velocity, gravity, step)
+
+        if not xs:
+            st.warning("No trajectory points were generated.")
+            return
+
+        chart = ball.printer.main_print(xs, ys, title="Crazy Trajectory")
+        st.altair_chart(chart, use_container_width=True)
 
 if __name__ == "__main__":
     run_app()
